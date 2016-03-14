@@ -1,11 +1,11 @@
 package com.alesto.shortpath;
 
-import com.alesto.shortpath.graph.CellType;
 import com.alesto.shortpath.graph.Graph;
-import com.alesto.shortpath.util.CellLocationRandomizer;
+import com.alesto.shortpath.view.MainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -15,6 +15,13 @@ import java.io.IOException;
  * Created on 16.02.2016.
  */
 public class MainApp extends Application {
+
+    //contains all nodes and connections
+    private Graph graph;
+
+    //reference to the main controller
+    private MainController mainController;
+
     private Stage primaryStage;
     private BorderPane rootLayout;
 
@@ -25,6 +32,8 @@ public class MainApp extends Application {
 
         initRootLayout();
         initMainLayout();
+
+        graph = new Graph(mainController.getMainPane());
     }
 
     public void initRootLayout() {
@@ -35,7 +44,6 @@ public class MainApp extends Application {
             rootLayout = loader.load();
 
             Scene scene = new Scene(rootLayout);
-            scene.getStylesheets().add(getClass().getResource("resources/css/application.css").toExternalForm());
 
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -44,46 +52,22 @@ public class MainApp extends Application {
         }
     }
     public void initMainLayout() {
-        /*try {
+        try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/main.fxml"));
 
             AnchorPane mainLayout = loader.load();
 
             rootLayout.setCenter(mainLayout);
+
+            //creating reference to this object in controller
+            mainController = loader.getController();
+            mainController.setMainApp(this);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
-        Graph graph = new Graph();
-        rootLayout.setCenter(graph.getScrollPane());
-
-        Model model = graph.getModel();
-
-        graph.beginUpdate();
-
-        model.addCell("Cell A", CellType.RECTANGLE);
-        model.addCell("Cell B", CellType.RECTANGLE);
-        model.addCell("Cell C", CellType.RECTANGLE);
-        model.addCell("Cell D", CellType.TRIANGLE);
-        model.addCell("Cell E", CellType.TRIANGLE);
-        model.addCell("Cell F", CellType.RECTANGLE);
-        model.addCell("Cell G", CellType.RECTANGLE);
-        model.addCell("Cell H", CellType.RECTANGLE);
-        model.addCell("Cell J", CellType.RECTANGLE);
-
-        model.addEdge("Cell A", "Cell B");
-        model.addEdge("Cell A", "Cell C");
-        model.addEdge("Cell B", "Cell C");
-        model.addEdge("Cell C", "Cell D");
-        model.addEdge("Cell B", "Cell E");
-        model.addEdge("Cell D", "Cell F");
-        model.addEdge("Cell D", "Cell G");
-        model.addEdge("Cell J", "Cell A");
-        model.addEdge("Cell H", "Cell J");
-
-        graph.endUpdate();
-
-        CellLocationRandomizer randomizer = new CellLocationRandomizer(graph,700,550);
-        randomizer.execute();
+        }
+    }
+    public Graph getGraph() {
+        return graph;
     }
 }

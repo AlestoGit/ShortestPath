@@ -1,30 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="664.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alesto.shortpath.view.MainController">
    <children>
-      <SplitPane dividerPositions="0.7931726907630522" orientation="VERTICAL" prefHeight="500.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.8489425981873112" orientation="VERTICAL" prefHeight="664.0" prefWidth="920.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="698.0">
                <children>
-                  <ScrollPane prefHeight="381.0" prefWidth="698.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Pane fx:id="mainPane" layoutY="-117.0" onMouseEntered="#enterPaneListener" onMouseExited="#quitPaneListener" prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="698.0">
                <children>
-                  <SplitPane dividerPositions="0.125" prefHeight="111.0" prefWidth="698.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <SplitPane dividerPositions="0.17962466487935658" prefHeight="97.0" prefWidth="918.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                            <children>
-                              <Button layoutX="13.0" layoutY="14.0" mnemonicParsing="false" text="Add cell" />
-                              <Button layoutX="8.0" layoutY="55.0" mnemonicParsing="false" text="Add conn" />
+                              <Group layoutX="16.0" layoutY="14.0">
+                                 <children>
+                                    <ToggleButton fx:id="addNodesButton" mnemonicParsing="false" onAction="#handleAddNodesButton" prefHeight="31.0" prefWidth="96.0" text="Add nodes" />
+                                    <ToggleButton fx:id="addConnectionButton" layoutY="39.0" mnemonicParsing="false" onAction="#handleAddConnectionButton" prefHeight="31.0" prefWidth="96.0" text="Connect nodes" />
+                                 </children>
+                              </Group>
                            </children>
                         </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="98.0" prefWidth="582.0">
+                           <children>
+                              <Button fx:id="clear" layoutX="20.0" layoutY="35.0" mnemonicParsing="false" onAction="#clear" text="Clear" />
+                              <Button fx:id="connect" layoutX="92.0" layoutY="35.0" mnemonicParsing="false" onAction="#handleConnectionProcess" text="Connect!" />
+                              <Button fx:id="findPath" layoutX="196.0" layoutY="22.0" mnemonicParsing="false" onAction="#findPath" prefHeight="52.0" prefWidth="75.0" text="FIND PATH" />
+                              <Button fx:id="createRandomMap" layoutX="658.0" layoutY="16.0" mnemonicParsing="false" onAction="#createRandomMap" prefHeight="63.0" prefWidth="64.0" text="Create random map" textAlignment="CENTER" wrapText="true" />
+                           </children></AnchorPane>
                     </items>
                   </SplitPane>
                </children></AnchorPane>

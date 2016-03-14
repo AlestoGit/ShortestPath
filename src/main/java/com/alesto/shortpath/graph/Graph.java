@@ -1,88 +1,118 @@
 package com.alesto.shortpath.graph;
 
-import javafx.scene.Group;
-import javafx.scene.control.ScrollPane;
+import com.alesto.shortpath.graph.line.Connection;
+import com.alesto.shortpath.graph.node.AnchorNode;
+import com.alesto.shortpath.util.PathSearch;
+import com.alesto.shortpath.util.TwoNodeStorage;
 import javafx.scene.layout.Pane;
-import com.alesto.shortpath.*;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Graph {
+    private Pane mainPane;
+    private Set<AnchorNode> nodeSet = new HashSet<>();
+    private Set<Connection> connectionSet = new HashSet<>();
 
-    private Model model;
+    public void addNode(AnchorNode node) {
+        nodeSet.add(node);
+        mainPane.getChildren().add(node);
+    }
 
-    private Group canvas;
+    public void addConnection() {
+        //make our nodes' view default
+        resetNodes();
 
-    private ZoomableScrollPane scrollPane;
+        AnchorNode[] connectibleNodes = TwoNodeStorage.getAndClear();
+        if(connectibleNodes != null) {
+            AnchorNode start = connectibleNodes[0];
+            AnchorNode end = connectibleNodes[1];
 
-    MouseGestures mouseGestures;
+            addConnection(start,end);
+        } else {
+            //todo alert
+        }
+    }
+
+    public void addConnection(AnchorNode start, AnchorNode end) {
+        if(start.connectedTo(end)) {
+            //todo alert already connected
+        } else {
+            Connection connection = Connection.createConnection(start,end);
+
+            connectionSet.add(connection);
+
+            mainPane.getChildren().add(connection.getLine());
+            mainPane.getChildren().add(connection.getLabel());
+        }
+    }
+
+    public void findPath() {
+        //make our nodes' view default
+        resetNodes();
+
+        AnchorNode[] connectibleNodes = TwoNodeStorage.getAndClear();
+        if(connectibleNodes != null) {
+            List<AnchorNode> way = PathSearch.findPath(nodeSet,connectibleNodes[0],connectibleNodes[1]);
+            way.get(0).setState(AnchorNode.State.DEPARTURE);
+            way.get(way.size()-1).setState(AnchorNode.State.DESTINATION);
+            for(int i = 1; i < way.size()-1; i++) {
+                way.get(i).setState(AnchorNode.State.TRANSIT);
+            }
+
+            for(AnchorNode node : way) {
+                for(Connection connection : connectionSet) {
+                    if(connection.getSource().equals(node) && connection.getTarget().equals(node.getPrevious())
+                           || connection.getTarget().equals(node) && connection.getSource().equals(node.getPrevious())) {
+                        connection.setState(Connection.State.TRANSIT);
+                    }
+                }
+            }
+        } else {
+            //todo alert
+        }
+    }
 
     /**
-     * the pane wrapper is necessary or else the scrollpane would always align
-     * the top-most and left-most child to the top and left eg when you drag the
-     * top child down, the entire scrollpane would move down
+     * Bounces back the state of the nodes to DEFAULT state.
      */
-    CellLayer cellLayer;
-
-    public Graph() {
-
-        this.model = new Model();
-
-        canvas = new Group();
-        cellLayer = new CellLayer();
-
-        canvas.getChildren().add(cellLayer);
-
-        mouseGestures = new MouseGestures(this);
-
-        scrollPane = new ZoomableScrollPane(canvas);
-
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-
-    }
-
-    public ScrollPane getScrollPane() {
-        return this.scrollPane;
-    }
-
-    public Pane getCellLayer() {
-        return this.cellLayer;
-    }
-
-    public Model getModel() {
-        return model;
-    }
-
-    public void beginUpdate() {
-    }
-
-    public void endUpdate() {
-
-        // add components to graph pane
-        getCellLayer().getChildren().addAll(model.getAddedEdges());
-        getCellLayer().getChildren().addAll(model.getAddedCells());
-
-        // remove components from graph pane
-        getCellLayer().getChildren().removeAll(model.getRemovedCells());
-        getCellLayer().getChildren().removeAll(model.getRemovedEdges());
-
-        // enable dragging of cells
-        for (Cell cell : model.getAddedCells()) {
-            mouseGestures.setEvents(cell);
+    private void resetNodes() {
+        for(AnchorNode node : nodeSet) {
+            if(!node.getState().equals(AnchorNode.State.DEFAULT))
+                node.setState(AnchorNode.State.DEFAULT);
         }
 
-        // every cell must have a parent, if it doesn't, then the graphParent is
-        // the parent
-        getModel().attachOrphansToGraphParent(model.getAddedCells());
-
-        // remove reference to graphParent
-        getModel().disconnectFromGraphParent(model.getRemovedCells());
-
-        // merge added & removed cells with all cells
-        getModel().merge();
-
+        for(Connection connection : connectionSet) {
+            if(!connection.getState().equals(Connection.State.DEFAULT))
+                connection.setState(Connection.State.DEFAULT);
+        }
     }
 
-    public double getScale() {
-        return this.scrollPane.getScaleValue();
+    /**
+     * Constructor
+     * @param mainPane
+     */
+
+    public Graph(Pane mainPane) {
+        this.mainPane = mainPane;
+    }
+
+    /**
+     * GETTERS
+     */
+
+    public Set<AnchorNode> getNodes() {
+        return nodeSet;
+    }
+
+    public Set<Connection> getConnections() {
+        return connectionSet;
+    }
+
+    public Pane getMainPane() {
+        return mainPane;
     }
 }
+
+

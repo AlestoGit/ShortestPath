@@ -56,7 +56,7 @@ public class MainController {
     @FXML
     private void findPath() {
         mainApp.getGraph().findPath();
-        handleAddConnectionButton();
+        unselectAllButtons();
     }
 
     @FXML
@@ -64,6 +64,7 @@ public class MainController {
         clear();
         RandomMapCreator creator = new RandomMapCreator(mainApp.getGraph(),mainPane);
         creator.createNewMap();
+        unselectAllButtons();
     }
 
     @FXML
@@ -71,6 +72,12 @@ public class MainController {
         mainApp.getGraph().getConnections().clear();
         mainApp.getGraph().getNodes().clear();
         mainPane.getChildren().clear();
+    }
+
+    private void unselectAllButtons() {
+        addConnectionButton.setSelected(false);
+        addConnectionButton.setSelected(false);
+        ListenerManager.switchToDraggableMode(mainApp.getGraph());
     }
 
     /**
